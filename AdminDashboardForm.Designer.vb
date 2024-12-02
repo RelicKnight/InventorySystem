@@ -25,7 +25,6 @@ Partial Class AdminDashboardForm
         Label1 = New Label()
         btnManageUsers = New Button()
         btnManageInventory = New Button()
-        btnRegisterStaff = New Button()
         btnLogout = New Button()
         SuspendLayout()
         ' 
@@ -40,36 +39,27 @@ Partial Class AdminDashboardForm
         ' 
         ' btnManageUsers
         ' 
-        btnManageUsers.Location = New Point(40, 136)
+        btnManageUsers.Location = New Point(40, 105)
         btnManageUsers.Name = "btnManageUsers"
-        btnManageUsers.Size = New Size(162, 29)
+        btnManageUsers.Size = New Size(162, 87)
         btnManageUsers.TabIndex = 2
         btnManageUsers.Text = "Manage Users"
         btnManageUsers.UseVisualStyleBackColor = True
         ' 
         ' btnManageInventory
         ' 
-        btnManageInventory.Location = New Point(230, 136)
+        btnManageInventory.Location = New Point(230, 105)
         btnManageInventory.Name = "btnManageInventory"
-        btnManageInventory.Size = New Size(162, 29)
+        btnManageInventory.Size = New Size(162, 87)
         btnManageInventory.TabIndex = 3
         btnManageInventory.Text = "Manage Inventory"
         btnManageInventory.UseVisualStyleBackColor = True
         ' 
-        ' btnRegisterStaff
-        ' 
-        btnRegisterStaff.Location = New Point(40, 200)
-        btnRegisterStaff.Name = "btnRegisterStaff"
-        btnRegisterStaff.Size = New Size(162, 29)
-        btnRegisterStaff.TabIndex = 5
-        btnRegisterStaff.Text = "Register Staff"
-        btnRegisterStaff.UseVisualStyleBackColor = True
-        ' 
         ' btnLogout
         ' 
-        btnLogout.Location = New Point(298, 276)
+        btnLogout.Location = New Point(127, 274)
         btnLogout.Name = "btnLogout"
-        btnLogout.Size = New Size(94, 29)
+        btnLogout.Size = New Size(172, 40)
         btnLogout.TabIndex = 7
         btnLogout.Text = "Logout"
         btnLogout.UseVisualStyleBackColor = True
@@ -80,7 +70,6 @@ Partial Class AdminDashboardForm
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(449, 368)
         Controls.Add(btnLogout)
-        Controls.Add(btnRegisterStaff)
         Controls.Add(btnManageInventory)
         Controls.Add(btnManageUsers)
         Controls.Add(Label1)
@@ -94,7 +83,6 @@ Partial Class AdminDashboardForm
     Friend WithEvents Label1 As Label
     Friend WithEvents btnManageUsers As Button
     Friend WithEvents btnManageInventory As Button
-    Friend WithEvents btnRegisterStaff As Button
     Friend WithEvents btnLogout As Button
 
 

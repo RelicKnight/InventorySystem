@@ -17,7 +17,7 @@ Public Class LoginForm
         ' Query to check username and password
         Using conn As New SqlConnection(connectionString)
             ' SQL query to check if the user exists and get their role
-            Dim query As String = "SELECT Role FROM Users WHERE Username = @Username AND Password = @Password"
+            Dim query As String = "SELECT Role FROM Users WHERE Username = @Username AND Password = @Password COLLATE Latin1_General_BIN"
             Dim cmd As New SqlCommand(query, conn)
 
             ' Add parameters to prevent SQL injection
@@ -35,6 +35,8 @@ Public Class LoginForm
                 End If
             Catch ex As Exception
                 MessageBox.Show("Error connecting to the database: " & ex.Message)
+                ClearLoginFields() ' Clear the fields on error
+                Return ' Exit the method if there's an error
             End Try
         End Using
 
@@ -46,15 +48,27 @@ Public Class LoginForm
             ' Redirect to AdminDashboardForm
             Me.Hide() ' Hide the login form
             AdminDashboardForm.Show() ' Show the Admin dashboard form
+            ClearLoginFields() ' Clear fields after successful login
         ElseIf role = "Staff" Then
             MessageBox.Show("Welcome, Staff!")
             ' Store the username in the shared variable
             currentUser = txtUsername.Text
-            ' Redirect to StaffDashboardForm
+            ' Redirect to InventoryManagementForm directly for staff
             Me.Hide() ' Hide the login form
-            StaffDashboardForm.Show() ' Show the Staff dashboard form
+            Dim inventoryForm As New InventoryManagementForm(role)
+            inventoryForm.Show() ' Show the Inventory Management form
+            ClearLoginFields() ' Clear fields after successful login
         Else
             MessageBox.Show("Invalid username or password.")
+            ClearLoginFields() ' Clear fields after failed login
         End If
     End Sub
+
+    ' Method to clear the login fields
+    Private Sub ClearLoginFields()
+        txtUsername.Clear()
+        txtPassword.Clear()
+    End Sub
+
+
 End Class

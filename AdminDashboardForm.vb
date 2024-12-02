@@ -14,22 +14,18 @@ Public Class AdminDashboardForm
 
     ' Button click event for Inventory Management
     Private Sub btnManageInventory_Click(sender As Object, e As EventArgs) Handles btnManageInventory.Click
-        ' Show the Inventory Management form
-        InventoryManagementForm.Show()
+        ' Create a new instance of InventoryManagementForm and pass the role
+        Dim inventoryManagement As New InventoryManagementForm("Admin")
+        inventoryManagement.Show() ' Show the Inventory Management form
         Me.Hide() ' Hide Admin Dashboard
     End Sub
 
-    ' Button click event for User Management (Staff)
+    ' Button click event for User Management 
     Private Sub btnManageUsers_Click(sender As Object, e As EventArgs) Handles btnManageUsers.Click
-        ' Show the User Management form
-        UserManagementForm.Show()
+        ' Create an instance of the UserManagementForm
+        Dim userManagement As New UserManagementForm("Admin") ' Pass the role "Admin" to the UserManagementForm
+        userManagement.Show() ' Show the UserManagementForm
         Me.Hide() ' Hide Admin Dashboard
     End Sub
 
-    ' Button click event for Registering New Staff
-    Private Sub btnRegisterStaff_Click(sender As Object, e As EventArgs) Handles btnRegisterStaff.Click
-        ' Show the Register Staff form
-        RegisterStaffForm.Show()
-        Me.Hide() ' Hide Admin Dashboard
-    End Sub
 End Class

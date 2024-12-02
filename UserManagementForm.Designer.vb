@@ -37,17 +37,19 @@ Partial Class UserManagementForm
         lblUserID = New Label()
         txtUsername = New TextBox()
         txtPassword = New TextBox()
-        cmbRole = New TextBox()
         btnAddUser = New Button()
         btnUpdateUser = New Button()
         btnDeleteUser = New Button()
+        btnBack = New Button()
+        cmbRole = New ComboBox()
+        btnClear = New Button()
         CType(dgvUserList, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Location = New Point(300, 41)
+        Label1.Location = New Point(272, 33)
         Label1.Name = "Label1"
         Label1.Size = New Size(130, 20)
         Label1.TabIndex = 0
@@ -55,25 +57,29 @@ Partial Class UserManagementForm
         ' 
         ' Button1
         ' 
-        Button1.Location = New Point(430, 143)
+        Button1.Location = New Point(404, 130)
         Button1.Name = "Button1"
-        Button1.Size = New Size(94, 29)
+        Button1.Size = New Size(135, 41)
         Button1.TabIndex = 1
         Button1.Text = "Search"
         Button1.UseVisualStyleBackColor = True
         ' 
         ' txtSearch
         ' 
-        txtSearch.Location = New Point(224, 145)
+        txtSearch.Location = New Point(145, 140)
         txtSearch.Name = "txtSearch"
-        txtSearch.Size = New Size(178, 27)
+        txtSearch.Size = New Size(228, 27)
         txtSearch.TabIndex = 2
         ' 
         ' dgvUserList
         ' 
+        dgvUserList.AllowUserToAddRows = False
+        dgvUserList.AllowUserToDeleteRows = False
         dgvUserList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        dgvUserList.Location = New Point(21, 188)
+        dgvUserList.Location = New Point(53, 189)
+        dgvUserList.MultiSelect = False
         dgvUserList.Name = "dgvUserList"
+        dgvUserList.ReadOnly = True
         dgvUserList.RowHeadersWidth = 51
         dgvUserList.Size = New Size(655, 188)
         dgvUserList.TabIndex = 3
@@ -81,7 +87,7 @@ Partial Class UserManagementForm
         ' Label2
         ' 
         Label2.AutoSize = True
-        Label2.Location = New Point(75, 93)
+        Label2.Location = New Point(53, 92)
         Label2.Name = "Label2"
         Label2.Size = New Size(97, 20)
         Label2.TabIndex = 0
@@ -90,7 +96,7 @@ Partial Class UserManagementForm
         ' lblLoggedInAdmin
         ' 
         lblLoggedInAdmin.AutoSize = True
-        lblLoggedInAdmin.Location = New Point(224, 93)
+        lblLoggedInAdmin.Location = New Point(177, 92)
         lblLoggedInAdmin.Name = "lblLoggedInAdmin"
         lblLoggedInAdmin.Size = New Size(133, 20)
         lblLoggedInAdmin.TabIndex = 0
@@ -99,7 +105,7 @@ Partial Class UserManagementForm
         ' Label4
         ' 
         Label4.AutoSize = True
-        Label4.Location = New Point(75, 148)
+        Label4.Location = New Point(70, 140)
         Label4.Name = "Label4"
         Label4.Size = New Size(56, 20)
         Label4.TabIndex = 0
@@ -173,47 +179,69 @@ Partial Class UserManagementForm
         txtPassword.Size = New Size(231, 27)
         txtPassword.TabIndex = 2
         ' 
-        ' cmbRole
-        ' 
-        cmbRole.Location = New Point(177, 534)
-        cmbRole.Name = "cmbRole"
-        cmbRole.Size = New Size(231, 27)
-        cmbRole.TabIndex = 2
-        ' 
         ' btnAddUser
         ' 
-        btnAddUser.Location = New Point(430, 443)
+        btnAddUser.Location = New Point(434, 435)
         btnAddUser.Name = "btnAddUser"
-        btnAddUser.Size = New Size(130, 29)
+        btnAddUser.Size = New Size(130, 45)
         btnAddUser.TabIndex = 1
         btnAddUser.Text = "Add User"
         btnAddUser.UseVisualStyleBackColor = True
         ' 
         ' btnUpdateUser
         ' 
-        btnUpdateUser.Location = New Point(430, 492)
+        btnUpdateUser.Location = New Point(434, 484)
         btnUpdateUser.Name = "btnUpdateUser"
-        btnUpdateUser.Size = New Size(130, 29)
+        btnUpdateUser.Size = New Size(130, 45)
         btnUpdateUser.TabIndex = 1
         btnUpdateUser.Text = "Update"
         btnUpdateUser.UseVisualStyleBackColor = True
         ' 
         ' btnDeleteUser
         ' 
-        btnDeleteUser.Location = New Point(430, 541)
+        btnDeleteUser.Location = New Point(434, 533)
         btnDeleteUser.Name = "btnDeleteUser"
-        btnDeleteUser.Size = New Size(130, 29)
+        btnDeleteUser.Size = New Size(130, 45)
         btnDeleteUser.TabIndex = 1
         btnDeleteUser.Text = "Delete"
         btnDeleteUser.UseVisualStyleBackColor = True
+        ' 
+        ' btnBack
+        ' 
+        btnBack.Location = New Point(586, 533)
+        btnBack.Name = "btnBack"
+        btnBack.Size = New Size(94, 45)
+        btnBack.TabIndex = 4
+        btnBack.Text = "Back"
+        btnBack.UseVisualStyleBackColor = True
+        ' 
+        ' cmbRole
+        ' 
+        cmbRole.DropDownStyle = ComboBoxStyle.DropDownList
+        cmbRole.FormattingEnabled = True
+        cmbRole.Location = New Point(177, 542)
+        cmbRole.Name = "cmbRole"
+        cmbRole.Size = New Size(151, 28)
+        cmbRole.TabIndex = 5
+        ' 
+        ' btnClear
+        ' 
+        btnClear.Location = New Point(586, 435)
+        btnClear.Name = "btnClear"
+        btnClear.Size = New Size(94, 45)
+        btnClear.TabIndex = 6
+        btnClear.Text = "Clear"
+        btnClear.UseVisualStyleBackColor = True
         ' 
         ' UserManagementForm
         ' 
         AutoScaleDimensions = New SizeF(8F, 20F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(713, 628)
-        Controls.Add(dgvUserList)
+        ClientSize = New Size(758, 628)
+        Controls.Add(btnClear)
         Controls.Add(cmbRole)
+        Controls.Add(btnBack)
+        Controls.Add(dgvUserList)
         Controls.Add(txtPassword)
         Controls.Add(txtUsername)
         Controls.Add(txtSearch)
@@ -254,8 +282,10 @@ Partial Class UserManagementForm
     Friend WithEvents lblUserID As Label
     Friend WithEvents txtUsername As TextBox
     Friend WithEvents txtPassword As TextBox
-    Friend WithEvents cmbRole As TextBox
     Friend WithEvents btnAddUser As Button
     Friend WithEvents btnUpdateUser As Button
     Friend WithEvents btnDeleteUser As Button
+    Friend WithEvents btnBack As Button
+    Friend WithEvents cmbRole As ComboBox
+    Friend WithEvents btnClear As Button
 End Class

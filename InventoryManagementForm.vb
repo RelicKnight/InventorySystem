@@ -19,8 +19,13 @@ Public Class InventoryManagementForm
         ' Set the user role in the label to display the logged-in role
         lblUserRole.Text = "Logged in as: " & userRole
 
+        ' Change the button text to Logout if the user is Staff
+        If userRole = "Staff" Then
+            btnBack.Text = "Logout"
+        Else
+            btnBack.Text = "Back"
+        End If
     End Sub
-
     ' Back Button Logic
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         If userRole = "Admin" Then
@@ -28,9 +33,10 @@ Public Class InventoryManagementForm
             Dim adminDashboard As New AdminDashboardForm()
             adminDashboard.Show()
         ElseIf userRole = "Staff" Then
-            ' Redirect to Staff Dashboard
-            Dim staffDashboard As New LoginForm()
-            staffDashboard.Show()
+            ' Handle logout for Staff
+            ' You can add your logout logic here, e.g., navigate to the login form
+            Dim loginForm As New LoginForm()
+            loginForm.Show()
         End If
 
         ' Close the current form
@@ -39,8 +45,8 @@ Public Class InventoryManagementForm
 
     ' Load Items into DataGridView
     Private Sub LoadInventoryList()
-        ' Declare the query string
-        Dim query As String = "SELECT ItemID, ItemName, Quantity, Price FROM Inventory WHERE ItemName LIKE @Search"
+        ' Declare the query string to include AddedBy
+        Dim query As String = "SELECT ItemID, ItemName, Quantity, Price, AddedBy FROM Inventory WHERE ItemName LIKE @Search"
 
         Using conn As New SqlConnection(connectionString)
             ' Initialize the SqlCommand with the query and connection
@@ -62,6 +68,7 @@ Public Class InventoryManagementForm
             End Try
         End Using
     End Sub
+
 
     ' Add Item Button Logic
     Private Sub btnAddItem_Click(sender As Object, e As EventArgs) Handles btnAddItem.Click
@@ -85,15 +92,19 @@ Public Class InventoryManagementForm
             Return
         End If
 
+        ' Get the current user's username
+        Dim addedBy As String = LoginForm.currentUser ' Assuming currentUser is the shared variable holding the logged-in username
+
         ' SQL query to insert a new item
         Using conn As New SqlConnection(connectionString)
-            Dim query As String = "INSERT INTO Inventory (ItemName, Quantity, Price) VALUES (@ItemName, @Quantity, @Price)"
+            Dim query As String = "INSERT INTO Inventory (ItemName, Quantity, Price, AddedBy) VALUES (@ItemName, @Quantity, @Price, @AddedBy)"
             Dim cmd As New SqlCommand(query, conn)
 
             ' Add parameters to the command
             cmd.Parameters.AddWithValue("@ItemName", txtItemName.Text)
             cmd.Parameters.AddWithValue("@Quantity", quantity)
             cmd.Parameters.AddWithValue("@Price", price)
+            cmd.Parameters.AddWithValue("@AddedBy", addedBy)
 
             Try
                 conn.Open()
@@ -106,6 +117,7 @@ Public Class InventoryManagementForm
             End Try
         End Using
     End Sub
+
 
     ' Update Item Button Logic
     Private Sub btnUpdateItem_Click(sender As Object, e As EventArgs) Handles btnUpdateItem.Click
@@ -189,6 +201,9 @@ Public Class InventoryManagementForm
         LoadInventoryList() ' Reload inventory list when the search text changes
     End Sub
 
+    ' Boolean to track if an item is being updated or selected
+    Private isUpdating As Boolean = False
+
     ' Handle item selection from the DataGridView for updating or deleting
     Private Sub dgvInventoryList_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvInventoryList.CellClick
         If e.RowIndex >= 0 AndAlso dgvInventoryList.Rows(e.RowIndex).Cells("ItemID").Value IsNot DBNull.Value Then
@@ -202,11 +217,47 @@ Public Class InventoryManagementForm
             ' Enable Update button and disable Add button if a row is selected
             btnUpdateItem.Enabled = True
             btnAddItem.Enabled = False
+
+            ' Allow Delete only if fields are not being edited (no text entered)
+            isUpdating = False
+            DisableDeleteButtonIfUpdating() ' Disable Delete button if updating
+
         Else
             ' If no valid row is selected (empty row), reset everything for Add operation
             ClearFields()
             btnAddItem.Enabled = True
             btnUpdateItem.Enabled = False ' Disable Update button if no item is selected
+        End If
+    End Sub
+
+    ' Handle text change in the text fields to disable the Delete button
+    Private Sub txtItemName_TextChanged(sender As Object, e As EventArgs) Handles txtItemName.TextChanged
+        If Not isUpdating Then
+            isUpdating = True
+        End If
+        DisableDeleteButtonIfUpdating()
+    End Sub
+
+    Private Sub txtQuantity_TextChanged(sender As Object, e As EventArgs) Handles txtQuantity.TextChanged
+        If Not isUpdating Then
+            isUpdating = True
+        End If
+        DisableDeleteButtonIfUpdating()
+    End Sub
+
+    Private Sub txtPrice_TextChanged(sender As Object, e As EventArgs) Handles txtPrice.TextChanged
+        If Not isUpdating Then
+            isUpdating = True
+        End If
+        DisableDeleteButtonIfUpdating()
+    End Sub
+
+    ' Disable Delete button if text is entered in any of the text fields
+    Private Sub DisableDeleteButtonIfUpdating()
+        If isUpdating Then
+            btnDeleteItem.Enabled = False ' Disable Delete button if updating
+        Else
+            btnDeleteItem.Enabled = True ' Enable Delete button if not updating
         End If
     End Sub
 
@@ -220,10 +271,11 @@ Public Class InventoryManagementForm
         ' Enable the Add Item button after clearing the fields
         btnAddItem.Enabled = True
         btnUpdateItem.Enabled = False ' Disable Update button if no item is selected
+        btnDeleteItem.Enabled = True ' Re-enable Delete button after clearing fields
+        isUpdating = False ' Reset updating status after clearing
     End Sub
 
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
-        ' Reset the form fields to their initial state
         ClearFields()
     End Sub
 End Class

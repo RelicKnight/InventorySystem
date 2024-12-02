@@ -5,6 +5,7 @@ Public Class UserManagementForm
     ' Connection string to the database
     Dim connectionString As String = ConfigurationManager.ConnectionStrings("InventoryDB").ConnectionString
     Private userRole As String ' Store the role of the logged-in user
+    Private isUpdating As Boolean = False ' Track if the user is updating
 
     ' Constructor accepting the user role
     Public Sub New(role As String)
@@ -15,13 +16,13 @@ Public Class UserManagementForm
     ' On Form Load
     Private Sub UserManagementForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         lblLoggedInAdmin.Text = "Role: " & userRole ' Display the role of the logged-in user
-
         LoadUserList() ' Load the user list into DataGridView
 
         ' Populate the ComboBox with predefined roles
         cmbRole.Items.AddRange(New String() {"Admin", "Staff"})
         cmbRole.SelectedIndex = 0 ' Set default to "Admin"
         lblUserID.Text = "Auto Incremented"
+        DisableDeleteButtonIfUpdating() ' Initialize Delete button state
     End Sub
 
     ' Back Button Logic
@@ -30,7 +31,6 @@ Public Class UserManagementForm
             Dim adminDashboard As New AdminDashboardForm() ' Ensure this matches the constructor of AdminDashboardForm
             adminDashboard.Show()
         ElseIf userRole = "Staff" Then
-            ' If InventoryManagementForm requires arguments, pass them here
             Dim inventoryDashboard As New InventoryManagementForm(userRole) ' Adjust the constructor call based on the form's requirements
             inventoryDashboard.Show()
         End If
@@ -38,8 +38,6 @@ Public Class UserManagementForm
         ' Close the current form
         Me.Close()
     End Sub
-
-
 
     ' Load Users into DataGridView
     Private Sub LoadUserList()
@@ -65,6 +63,11 @@ Public Class UserManagementForm
     Private Sub btnAddUser_Click(sender As Object, e As EventArgs) Handles btnAddUser.Click
         If String.IsNullOrWhiteSpace(txtUsername.Text) OrElse String.IsNullOrWhiteSpace(txtPassword.Text) Then
             MessageBox.Show("Please fill out all fields.")
+            Return
+        End If
+
+        If cmbRole.SelectedIndex = -1 Then
+            MessageBox.Show("Please select a role.")
             Return
         End If
 
@@ -149,6 +152,8 @@ Public Class UserManagementForm
         cmbRole.SelectedIndex = -1
         btnAddUser.Enabled = True
         btnUpdateUser.Enabled = False
+        isUpdating = False ' Reset the updating state
+        DisableDeleteButtonIfUpdating() ' Update Delete button state
     End Sub
 
     ' Handle User Selection
@@ -162,6 +167,8 @@ Public Class UserManagementForm
 
             btnAddUser.Enabled = False
             btnUpdateUser.Enabled = True
+            isUpdating = False ' Reset updating state since we're selecting, not typing
+            DisableDeleteButtonIfUpdating() ' Update Delete button state
         End If
     End Sub
 
@@ -170,6 +177,30 @@ Public Class UserManagementForm
         LoadUserList()
     End Sub
 
+    ' Disable Delete Button Logic
+    Private Sub DisableDeleteButtonIfUpdating()
+        If isUpdating OrElse lblUserID.Text = "Auto Incremented" Then
+            btnDeleteUser.Enabled = False ' Disable Delete button
+        Else
+            btnDeleteUser.Enabled = True ' Enable Delete button
+        End If
+    End Sub
+
+    ' TextBox and ComboBox Change Events
+    Private Sub txtUsername_TextChanged(sender As Object, e As EventArgs) Handles txtUsername.TextChanged
+        If Not isUpdating Then isUpdating = True
+        DisableDeleteButtonIfUpdating()
+    End Sub
+
+    Private Sub txtPassword_TextChanged(sender As Object, e As EventArgs) Handles txtPassword.TextChanged
+        If Not isUpdating Then isUpdating = True
+        DisableDeleteButtonIfUpdating()
+    End Sub
+
+    Private Sub cmbRole_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbRole.SelectedIndexChanged
+        If Not isUpdating Then isUpdating = True
+        DisableDeleteButtonIfUpdating()
+    End Sub
 
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         ' Reset the form fields to their initial state

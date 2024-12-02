@@ -160,6 +160,8 @@ Partial Class InventoryManagementForm
         ' 
         dgvInventoryList.AllowUserToAddRows = False
         dgvInventoryList.AllowUserToDeleteRows = False
+        dgvInventoryList.AllowUserToResizeColumns = False
+        dgvInventoryList.AllowUserToResizeRows = False
         dgvInventoryList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvInventoryList.Location = New Point(8, 462)
         dgvInventoryList.MultiSelect = False

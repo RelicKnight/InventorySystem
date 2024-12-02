@@ -92,25 +92,54 @@ Public Class UserManagementForm
 
     ' Update User Logic
     Private Sub btnUpdateUser_Click(sender As Object, e As EventArgs) Handles btnUpdateUser.Click
+        ' Ensure all fields are filled
         If String.IsNullOrWhiteSpace(txtUsername.Text) OrElse String.IsNullOrWhiteSpace(txtPassword.Text) Then
             MessageBox.Show("Please fill out all fields.")
             Return
         End If
 
+        ' Ensure a row is selected in the DataGridView
+        If dgvUserList.SelectedRows.Count = 0 Then
+            MessageBox.Show("Please select a user to update.")
+            Return
+        End If
+
+        ' Retrieve the UserID from the selected row
+        Dim userID As String = dgvUserList.SelectedRows(0).Cells("UserID").Value.ToString()
+
+        ' Check if UserID is valid (it should never be empty if a row is selected)
+        If String.IsNullOrEmpty(userID) Then
+            MessageBox.Show("Please select a valid user to update.")
+            Return
+        End If
+
+        ' Check if the role is being updated
+        Dim oldRole As String = dgvUserList.SelectedRows(0).Cells("Role").Value.ToString()
+        Dim newRole As String = cmbRole.SelectedItem.ToString()
+
+        ' Confirm role change if necessary
+        If oldRole <> newRole Then
+            Dim confirm = MessageBox.Show($"Are you sure you want to change the role from '{oldRole}' to '{newRole}'?", "Confirm Role Change", MessageBoxButtons.YesNo)
+            If confirm = DialogResult.No Then
+                Return
+            End If
+        End If
+
+        ' Execute the update query
         Using conn As New SqlConnection(connectionString)
             Dim query As String = "UPDATE Users SET Username = @Username, Password = @Password, Role = @Role WHERE UserID = @UserID"
             Dim cmd As New SqlCommand(query, conn)
-            cmd.Parameters.AddWithValue("@UserID", lblUserID.Text)
+            cmd.Parameters.AddWithValue("@UserID", userID)
             cmd.Parameters.AddWithValue("@Username", txtUsername.Text)
             cmd.Parameters.AddWithValue("@Password", txtPassword.Text)
-            cmd.Parameters.AddWithValue("@Role", cmbRole.SelectedItem.ToString())
+            cmd.Parameters.AddWithValue("@Role", newRole)
 
             Try
                 conn.Open()
                 cmd.ExecuteNonQuery()
                 MessageBox.Show("User updated successfully.")
-                LoadUserList()
-                ClearFields()
+                LoadUserList() ' Reload the user list
+                ClearFields()   ' Clear the form fields
             Catch ex As Exception
                 MessageBox.Show("Error updating user: " & ex.Message)
             End Try
@@ -158,17 +187,23 @@ Public Class UserManagementForm
 
     ' Handle User Selection
     Private Sub dgvUserList_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvUserList.CellClick
+        ' Ensure a valid row is clicked (e.RowIndex >= 0)
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = dgvUserList.Rows(e.RowIndex)
+
+            ' Populate fields with the selected row's data
             lblUserID.Text = row.Cells("UserID").Value.ToString()
             txtUsername.Text = row.Cells("Username").Value.ToString()
             txtPassword.Text = row.Cells("Password").Value.ToString()
             cmbRole.SelectedItem = row.Cells("Role").Value.ToString()
 
+            ' Disable Add button and Enable Update button
             btnAddUser.Enabled = False
             btnUpdateUser.Enabled = True
-            isUpdating = False ' Reset updating state since we're selecting, not typing
-            DisableDeleteButtonIfUpdating() ' Update Delete button state
+
+            ' Reset the updating state
+            isUpdating = False
+            DisableDeleteButtonIfUpdating() ' Update the Delete button state
         End If
     End Sub
 

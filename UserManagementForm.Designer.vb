@@ -75,12 +75,15 @@ Partial Class UserManagementForm
         ' 
         dgvUserList.AllowUserToAddRows = False
         dgvUserList.AllowUserToDeleteRows = False
+        dgvUserList.AllowUserToResizeColumns = False
+        dgvUserList.AllowUserToResizeRows = False
         dgvUserList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvUserList.Location = New Point(53, 189)
         dgvUserList.MultiSelect = False
         dgvUserList.Name = "dgvUserList"
         dgvUserList.ReadOnly = True
         dgvUserList.RowHeadersWidth = 51
+        dgvUserList.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         dgvUserList.Size = New Size(655, 188)
         dgvUserList.TabIndex = 3
         ' 

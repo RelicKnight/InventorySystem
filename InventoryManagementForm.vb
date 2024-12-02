@@ -278,4 +278,5 @@ Public Class InventoryManagementForm
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         ClearFields()
     End Sub
+
 End Class
